@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Qonda_123456
+    networks:
+      - my_network
+
+  flask-app:
+    build: .
+    container_name: flask-app
+    depends_on:
+      - mysql
+    environment:
+      - DATABASE_URL=mysql://root:Qonda_123456@mysql:3306/my_database
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squat-You</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+
+
+</head>
+<body>
+    <header>
+        <h1>{{ greeting }}</h1>
+    </header>
+    <main>
+        <!-- Buttons for different fitness levels -->
+        <div>
+            <button type="button" id="btnBeginner" aria-label="Beginner Training">Beginner</button>
+            <button type="button" id="btnIntermediate" aria-label="Intermediate Training">Intermediate</button>
+            <button type="button" id="btnElite" aria-label="Elite Training">Elite</button>
+            <button type="button" id="btnMaster" aria-label="Master Training">Master</button>
+            <button type="button" id="btnGrandMaster" aria-label="Grand Master Training">Grand Master</button>
+        </div>
+
+        <ul id="sessions-display" role="list" aria-live="polite">
+            <li>Click a button to load training sessions.</li>
+        </ul>
+    </main>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+    const sessionsDisplay = $('#sessions-display');
+
+    // Function to handle button click and fetch training sessions
+    function handleButtonClick(fitnessLevel) {
+        // Show loading indicator
+        sessionsDisplay.html('<li>Loading training sessions...</li>');
+
+        // Make the AJAX GET request
+        $.ajax({
+            url: '/api/training_sessions/' + fitnessLevel,
+            type: 'GET',
+            success: function(res) {
+                if (res.length === 0) {
+                    sessionsDisplay.html('<li>No sessions available for this level.</li>');
+                    return;
+                }
+
+                // Populate the list with training sessions for all 6 weeks
+                let sessionsList = '';
+                res.forEach(session => {
+                    sessionsList +=
+                        <li>
+                            <strong>${session.session_name}</strong>:
+                            ${session.exercises} (Week ${session.week_number}) - ${session.repetitions} reps x ${session.sets} sets
+                        </li>
+                    ;
+                });
+                sessionsDisplay.html(sessionsList);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+                sessionsDisplay.html('<li>Error fetching training sessions. Please try again later.</li>');
+            }
+        });
+    }
+
+    // Bind the click event to the buttons for each fitness level
+    $('#btnBeginner').on('click', function() {
+        handleButtonClick('Beginner');
+    });
+    $('#btnIntermediate').on('click', function() {
+        handleButtonClick('Intermediate');
+    });
+    $('#btnElite').on('click', function() {
+        handleButtonClick('Elite');
+    });
+    $('#btnMaster').on('click', function() {
+        handleButtonClick('Master');
+    });
+    $('#btnGrandMaster').on('click', function() {
+        handleButtonClick('Grand Master');
+    });
+});
+
+    </script>
+</body>
+</html>
