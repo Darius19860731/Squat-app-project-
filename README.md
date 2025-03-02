@@ -1,2 +1,2 @@
-# Squat-app-roject-
+# Squat-app-project-
 Squat program aplication
